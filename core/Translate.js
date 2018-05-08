@@ -52,11 +52,13 @@ class Translate
         Translate.instance = this;
 
         this._folder = null;
+        this.default = null;
         this.dictionary = {}
     }
 
 
     // folder
+    // default language
     config( config )
     {
         if( path.isAbsolute( config.folder )  )
@@ -67,21 +69,38 @@ class Translate
         {
             this._folder = path.join(process.cwd(), config.folder)
         }
+        if( config.default !== undefined )
+            this.default = config.default;
         this._readFolder()
+        console.log( `[${FCL_WHITE}${new Date().toLocaleTimeString()}${RESET}] Default language sets to: ${FCL_MAGENTA}${this.default}${RESET}` )
+        console.log( `[${FCL_WHITE}${new Date().toLocaleTimeString()}${RESET}] ${FCL_GREEN}All translations loaded!!${RESET}` )
     }
 
 
-    translate()
+    translate(key, lang)
     {
-        console.log('traduzco')
+        if( lang === undefined  )
+            lang = this.default
+
+        return this.dictionary[lang][key];
     }
 
 
+    /**
+     * Adds a translation in dictionary
+     * @param {*} lang 
+     * @param {*} key 
+     * @param {*} value 
+     */
     addTanslate(lang, key, value)
     {
         if(!(lang in this.dictionary) )
             this.dictionary[lang] = {}
         
+        if( this.default === null )
+            this.default = lang;
+
+
         this.dictionary[lang][key] = value;    
     }
 
@@ -104,7 +123,9 @@ class Translate
 
 
 
-
+    /**
+     * Reads a folder
+     */
     _readFolder()
     {
         console.log( `${FCL_WHITE}Translations Folder:${RESET} [${FCL_CYAN}${this._folder}${RESET}]` )
@@ -121,11 +142,14 @@ class Translate
 
 
 
-
+    /**
+     * Read a file and gets the language to add in dictonary
+     * @param {*} file 
+     */
     _readFile( file )
     {
         let translate = JSON.parse( fs.readFileSync(path.join(this._folder, file), 'utf8') )
-        let lang = file.split('-')
+        let lang = file.split('_')
         this._readJson( translate, lang[0] )
         console.log( `[${FCL_WHITE}${new Date().toLocaleTimeString()}${RESET}] (${FCL_MAGENTA}${lang[0]}${RESET}) ${FCL_GREY}${file}${RESET} ${FCL_GREEN}Done!${RESET}` )
     }
@@ -133,7 +157,12 @@ class Translate
 
 
 
-
+    /**
+     * Reads a JSON and adds all keys to dictionary
+     * @param {*} json 
+     * @param {*} lang 
+     * @param {*} key 
+     */
     _readJson(json, lang, key)
     {
         let aux_key = '';
