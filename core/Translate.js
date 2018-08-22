@@ -126,7 +126,7 @@ class Translate
 
         if( !translation )
         {
-            return '';
+            return key;
         }
 
         if( interpolate )

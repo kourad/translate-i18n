@@ -1,6 +1,6 @@
 {
   "name": "translate-i18n",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "translate module for nodeJs based on JSON files",
   "main": "index.js",
   "scripts": {
