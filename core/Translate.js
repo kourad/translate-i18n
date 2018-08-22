@@ -76,13 +76,70 @@ class Translate
         console.log( `[${FCL_WHITE}${new Date().toLocaleTimeString()}${RESET}] ${FCL_GREEN}All translations loaded!!${RESET}` )
     }
 
-
-    translate(key, lang)
+    /**
+     * Metodo de traduccion 
+     * @param {*} key 
+     * @param {*} lang 
+     * 
+     * 
+     * @example
+     * translate('test_key');
+     * translate('test_key', 'lang_key')
+     * translate('test_key', {interpolation_object})
+     * translate('test_key', {interpolation_object}, 'lang_key')
+     */
+    translate(key, op1, op2)
     {
-        if( lang === undefined  )
+        /* if( lang === undefined  )
             lang = this.default
 
-        return this.dictionary[lang][key];
+        return this.dictionary[lang][key]; */
+
+        let lang = this.default;
+        let interpolate = false;
+        let translation = null;
+
+        if( !key )
+            throw new Error('No translation key found on arguments');
+
+        // segunda opcion -> no interpolacion -> lenguaje definido
+        if( op1 &&  typeof op1 === String  ) 
+        {
+            lang = op1;
+        }
+        else
+        {
+            // interpolacion activada
+            interpolate = true;
+        }
+
+        if( op2 )
+        {
+            lang = op2;
+        }
+
+        if( !this.dictionary[lang] )
+            throw new Error('Language not found on dictionary')
+
+
+        translation = this.dictionary[lang][key];
+
+        if( !translation )
+        {
+            return '';
+        }
+
+        if( interpolate )
+        {
+            for( let i in op1 )
+            {
+                translation = translation.replace(`{{${i}}}`, op1[i])
+            }
+        }
+
+
+
+        return translation
     }
 
 
