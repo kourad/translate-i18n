@@ -67,7 +67,7 @@ class Translate
         }
         else
         {
-            this._folder = path.join(process.cwd(), config.folder)
+            this._folder = path.join(process.cwd(), config.folder) // posible bug cambiar al host de la carpeta
         }
         if( config.default !== undefined )
             this.default = config.default;
